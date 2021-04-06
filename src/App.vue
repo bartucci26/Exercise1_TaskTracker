@@ -1,28 +1,49 @@
 <template>
 <div class="container">
-  <Header title="Task Tracker" />
-  <Tasks @delete-task="deleteTask" :tasks="tasks"/>
+  <Header @toggle-add-task="toggleAddTask" title="Task Tracker" 
+  :showAddTask="showAddTask"/>
+  <div v-show="showAddTask">
+
+  <AddTask @add-task="addTask" />
+
+  </div>
+  <Tasks @flag-task="ChangeFlag" @toggle-reminder ="toggleReminder" @delete-task="deleteTask" :tasks="tasks"/>
 </div>
   
   
 </template>
 
 <script>
+//basically create components inside components where you call in
+// you name the event with @(click) and call the function, 
+//you export the function on methods
+//you can emit the event from 'layer' to layer
+// in this case the delete task is emmited until App.vue
 import Header from './components/Header'
 import Tasks from './components/Tasks'
+import AddTask from './components/AddTask'
 
 export default {
   name: 'App',
   components: {
    Header,
-   Tasks
+   Tasks,
+   AddTask
    },
    data() {
      return {
-       tasks: []
+       tasks: [],
+       showAddTask : false,
+
      }
    },
    methods:{
+     toggleAddTask(){
+       this.showAddTask = !this.showAddTask
+     },
+     addTask(task) {
+       this.tasks =[...this.tasks, task]
+     },
      deleteTask(id) {
        if(confirm('Are you sure?')) {
          
@@ -30,6 +51,16 @@ export default {
        id)
          }
      },
+     toggleReminder(id){
+      this.tasks = this.tasks.map((task)=> task.id ===id ? 
+      {... task, reminder: !task.reminder} : task 
+      )
+     },
+     ChangeFlag(id){
+      this.tasks = this.tasks.map((task)=> task.id ===id ? 
+      {... task, importance: !task.importance} : task 
+      )
+     }
    },
    created() {
      this.tasks =[
@@ -38,18 +69,21 @@ export default {
          text: 'Doctors Appintment',
          day: 'March 1st at 2:30pm',
          reminder:true,
+         importance:false
        },
        {
          id: 2,
          text: 'Meeting',
          day: 'March 3rd at 12:30pm',
          reminder:true,
+         importance:false
        },
        {
          id: 3,
          text: 'Lunch',
          day: 'March 15th at 4:30pm',
          reminder:false,
+         importance:false
        }
 
      ]

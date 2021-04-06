@@ -10,7 +10,9 @@ export default {
         color:String
     },
     methods:{
-      
-    }
+      onClick() {
+          this.$emit('btn-click')
+      },
+    },
 }
 </script>
